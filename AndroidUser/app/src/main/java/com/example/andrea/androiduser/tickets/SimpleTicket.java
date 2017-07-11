@@ -1,35 +1,53 @@
 package com.example.andrea.androiduser.tickets;
 
-public class SimpleTicket implements Products{
-	double cost=0;
-	String id;
-	String name;
-	double duration;
-	public SimpleTicket(String name, String id, double cost, double duration) {
-		this.name = name;
-		this.id= id;
-		this.cost = cost;
-		this.duration = duration;
-	}
-	@Override
-	public double getCost() {
-		return cost;
-	}
+/**
+ * Created by Andrea on 08/07/2017.
+ */
 
-	@Override
-	public String getName() {
-		return name;
-	}
+public class SimpleTicket implements Product{
 
-	@Override
-	public String getId() {
-		return id;
-	}
-	@Override
-	public double getDuration() {
+    private final String description;
+    private final String type;
+    private double cost;
+    private int duration;
 
-		return duration;
-	}
-	
+    public SimpleTicket(String description, String type,double cost, int duration) {
+        this.description = description;
+        this.type=type;
+        this.cost = cost;
+        this.duration = duration;
+    }
 
+    @Override
+    public String getDescription() {
+        return this.description;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public double getCost() {
+        return cost;
+    }
+
+    @Override
+    public int getDuration() {
+        return duration;
+    }
+
+
+    public String toString(){
+
+        StringBuilder sb = new StringBuilder("");
+
+        sb.append("\tDescription: ").append(this.description);
+        sb.append("\n\tType: ").append(type);
+        sb.append("\n\tCost:").append(cost);
+        sb.append("\n\tDuration: ").append(duration);
+
+        return sb.toString();
+    }
 }

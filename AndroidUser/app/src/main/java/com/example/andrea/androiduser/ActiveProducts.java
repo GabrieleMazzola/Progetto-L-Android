@@ -1,6 +1,5 @@
 package com.example.andrea.androiduser;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -39,31 +38,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.andrea.androiduser.tickets.Sale.saleComparator;
-
 /**
- * Created by Andrea on 04/06/2017.
+ * Created by Andrea on 09/07/2017.
  */
 
-public class History extends AppCompatActivity {
+public class ActiveProducts extends AppCompatActivity {
 
-    TextView historyTextView;
+    Button statusButton;
+    TextView validTextView;
     RequestQueue requestQueue;
-    final StringBuilder sBuilderUserInfo = new StringBuilder();
+    StringBuilder sBuilderUserInfo;
 
     Map<String, Product> products;
-    List<Sale> salesList;
+    List<Sale> validSalesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
-        requestQueue = Volley.newRequestQueue(History.this.getApplicationContext());
+        setContentView(R.layout.activity_valid_ticket);
+        requestQueue = Volley.newRequestQueue(ActiveProducts.this.getApplicationContext());
         Intent intent = getIntent();
 
-        historyTextView = (TextView) findViewById(R.id.historyText);
+        requestQueue = Volley.newRequestQueue(ActiveProducts.this.getApplicationContext());
+
+
+        validTextView = (TextView) findViewById(R.id.validText);
+        sBuilderUserInfo = new StringBuilder();
 
         popolateProducts();
+
     }
 
     private void popolateProducts() {
@@ -81,7 +84,7 @@ public class History extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(History.this, "Something went wrong " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(ActiveProducts.this, "Something went wrong " + error.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
         ) {
@@ -97,6 +100,42 @@ public class History extends AppCompatActivity {
 
                 return headers;
             }
+        };
+        requestQueue.add(myJsonObjectRequest);
+    }
+
+    private void createHistoryVolley(){
+        String json_url = InfoHandler.MY_VALID_TICKETS_API+InfoHandler.getUsername(getApplicationContext());
+        JsonObjectRequest myJsonObjectRequest = new JsonObjectRequest(Request.Method.GET, json_url
+                , null,
+
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        parseTickets(response);
+                        orderValidSaleList();
+                        validTextView.setText(printTickets());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(ActiveProducts.this,"Something went wrong " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }
+        ) {@Override
+        public Map< String, String > getHeaders() throws AuthFailureError {
+            HashMap< String, String > headers = new HashMap < String, String > ();
+            sBuilderUserInfo.setLength(0);
+            sBuilderUserInfo.append(InfoHandler.getUsername(getApplicationContext()));
+            sBuilderUserInfo.append(":");
+            sBuilderUserInfo.append(InfoHandler.getPassword(getApplicationContext()));
+            String encodedCredentials = Base64.encodeToString(sBuilderUserInfo.toString().getBytes(), Base64.NO_WRAP);
+            headers.put("Authorization", "Basic " + encodedCredentials);
+
+            return headers;
+        }
         };
         requestQueue.add(myJsonObjectRequest);
     }
@@ -122,7 +161,7 @@ public class History extends AppCompatActivity {
                         products.put(type , new SimpleSeason(description,type,cost,duration));
                         break;
                     default:
-                        Toast.makeText(History.this,"Product not found", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ActiveProducts.this,"Product not found", Toast.LENGTH_LONG).show();
                         break;
                 }
             }
@@ -132,68 +171,17 @@ public class History extends AppCompatActivity {
         }
     }
 
-    private void createHistoryVolley(){
-        String json_url = InfoHandler.MY_TICKETS_API+InfoHandler.getUsername(getApplicationContext());
-        JsonObjectRequest myJsonObjectRequest = new JsonObjectRequest(Request.Method.GET, json_url
-                , null,
-
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        parseTickets(response);
-                        orderSaleList();
-                        historyTextView.setText(printTickets());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(History.this,"Something went wrong " + error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                }
-        ) {@Override
-        public Map< String, String > getHeaders() throws AuthFailureError {
-            HashMap< String, String > headers = new HashMap < String, String > ();
-            sBuilderUserInfo.setLength(0);
-            sBuilderUserInfo.append(InfoHandler.getUsername(getApplicationContext()));
-            sBuilderUserInfo.append(":");
-            sBuilderUserInfo.append(InfoHandler.getPassword(getApplicationContext()));
-            String encodedCredentials = Base64.encodeToString(sBuilderUserInfo.toString().getBytes(), Base64.NO_WRAP);
-            headers.put("Authorization", "Basic " + encodedCredentials);
-
-            return headers;
-        }
-        };
-        requestQueue.add(myJsonObjectRequest);
-    }
-
-    private String printTickets() {
-        Log.i("REDS","printTickets");
-        StringBuilder sb = new StringBuilder("TICKETS\n\n");
-        for(Sale sale : salesList){
-            sb.append("\n------------------------------");
-            sb.append(sale.toString());
-            sb.append("\n\n");
-        }
-        Log.i("REDS","printTickets FINE");
-        return sb.toString();
-    }
-
-    private void orderSaleList(){
-        Collections.sort(salesList,Sale.saleComparator);
-    }
-
-
     private void parseTickets(JSONObject obj){
         try {
             JSONArray ticketArray = (JSONArray)obj.get(JsonFields.DATA.toString());
-            salesList = new ArrayList<>();
+            validSalesList = new ArrayList<>();
             Log.i("REDS","parseTickets");
 
             for(int i = 0; i < ticketArray.length();i++){
 
                 JSONObject ticket = (JSONObject) ticketArray.get(i);
+                Log.i("REDS","parseTickets ITERATION " + i);
+                Log.i("REDS","object: " + ticket.toString());
 
                 String sellDate = (String) ticket.get(MyTickets.SALEDATE.toString());
                 Log.i("REDS","parseTickets SALE");
@@ -215,7 +203,7 @@ public class History extends AppCompatActivity {
                 Sale sale = new Sale(saleDate, Long.valueOf(serialCode.toString()), username, products.get(type), sellerMachineIp );
                 Log.i("REDS","parseTickets CREAZIONE SALE");
 
-                salesList.add(sale);
+                validSalesList.add(sale);
                 Log.i("REDS","parseTickets AGGIUNTA SALE");
 
             }
@@ -226,5 +214,29 @@ public class History extends AppCompatActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+/*
+    private void setButtonBackground(Button btn){
+        if(checkValidity() == 1){
+            btn.setBackgroundColor(Color.GREEN);
+        }
+        else{
+            btn.setBackgroundColor(Color.RED);
+        }
+    }
+*/
+    private void orderValidSaleList(){
+        Collections.sort(validSalesList,Sale.saleComparator);
+    }
+
+    private String printTickets() {
+
+        StringBuilder sb = new StringBuilder("TICKETS\n\n");
+        for(Sale sale : validSalesList){
+            sb.append("\n------------------------------");
+            sb.append(sale.toString());
+            sb.append("\n\n");
+        }
+        return sb.toString();
     }
 }

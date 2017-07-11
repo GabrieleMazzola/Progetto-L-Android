@@ -33,13 +33,20 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".UserHub" />
-        </activity>ù
+        </activity>
+        <activity android:name=".ActiveProducts"
+            android:parentActivityName=".UserHub" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".UserHub" />
+        </activity>
         <activity android:name=".SignIn"
             android:parentActivityName=".Login" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Login" />
         </activity>
+
     </application>
 
 </manifest>

@@ -23,7 +23,7 @@ public class UserHub extends AppCompatActivity {
         final Intent toLoginPage = new Intent(this,Login.class);
         final Intent toBuyTicket = new Intent(this,BuyTicket.class);
         final Intent toHistory = new Intent(this,History.class);
-        //final Intent toMakeFine = new Intent(this,MakeFine.class);
+        final Intent toActiveProducts = new Intent(this,ActiveProducts.class);
 
 
         Button logoutButton = (Button) findViewById(R.id.logout);
@@ -48,6 +48,14 @@ public class UserHub extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(toHistory);
+            }
+        });
+
+        Button validButton = (Button) findViewById(R.id.validButton);
+        validButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(toActiveProducts);
             }
         });
     }

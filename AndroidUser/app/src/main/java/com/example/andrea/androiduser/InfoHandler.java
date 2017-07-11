@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
+import java.util.Map;
+
 /**
  * Created by Andrea on 31/05/2017.
  */
@@ -18,9 +20,13 @@ public class InfoHandler {
 
     public static String MY_TICKETS_API = "http://"+HOST+"/ticket/webapi/secured/user/mytickets/";
 
+    public static String MY_VALID_TICKETS_API = "http://"+HOST+"/ticket/webapi/secured/user/myvalidtickets/";
+
     public static String REGISTRATION_API = "http://"+HOST+"/ticket/webapi/registration/";
 
     public static String TYPES_API = "http://"+HOST+"/ticket/webapi/types/";
+
+
 
 
     public InfoHandler(){
@@ -83,6 +89,7 @@ public class InfoHandler {
         USERLOGIN_API = "http://"+HOST+"/ticket/webapi/secured/user/login/";
         BUY_TICKET_API = "http://"+HOST+"/ticket/webapi/secured/user/buy/";
         MY_TICKETS_API = "http://"+HOST+"/ticket/webapi/secured/user/mytickets/";
+        MY_VALID_TICKETS_API = "http://"+HOST+"/ticket/webapi/secured/user/myvalidtickets/";
         REGISTRATION_API = "http://"+HOST+"/ticket/webapi/registration/";
         TYPES_API = "http://"+HOST+"/ticket/webapi/types/";
     }

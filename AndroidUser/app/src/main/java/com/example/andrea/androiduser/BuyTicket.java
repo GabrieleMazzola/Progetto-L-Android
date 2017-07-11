@@ -3,11 +3,13 @@ package com.example.andrea.androiduser;
 import android.os.Bundle;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,8 +21,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.android.volley.RequestQueue;
-import com.example.andrea.androiduser.tickets.Products;
-import com.example.andrea.androiduser.tickets.SimpleTicket;
+
+import com.example.andrea.androiduser.jsonenumerations.JsonFields;
+
+import com.example.andrea.androiduser.jsonenumerations.TicketTypes;
+import com.example.andrea.androiduser.tickets.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +33,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +43,19 @@ import java.util.Map;
 
 public class BuyTicket extends AppCompatActivity {
 
-    TextView creditCardTextView;
+    TextView creditCardTextView1;               //EditText
+    TextView creditCardTextView2;
+    TextView creditCardTextView3;
+    TextView creditCardTextView4;
+
+    StringBuilder sBuilderCreditCard = new StringBuilder();
+
     Spinner types;
     RequestQueue requestQueue;
     final StringBuilder sBuilderUserInfo = new StringBuilder();
-    private Map<String, Products> productMap;
+    private Map<String, Product> productMap;
+
+    //boolean firstTimeEnteringCrediCardNumber=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,20 +69,54 @@ public class BuyTicket extends AppCompatActivity {
         getTicketTypes();
         types = (Spinner) findViewById(R.id.types);
 
-        creditCardTextView = (TextView) findViewById(R.id.creditcard);
+        creditCardTextView1 = (EditText) findViewById(R.id.creditcard1);
+        creditCardTextView2 = (TextView) findViewById(R.id.creditcard2);
+        creditCardTextView3 = (TextView) findViewById(R.id.creditcard3);
+        creditCardTextView4 = (TextView) findViewById(R.id.creditcard4);
+/*
+        creditCardTextView1.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                creditCardTextView1.setFocusable(false);
+                creditCardTextView2.setFocusable(true);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(firstTimeEnteringCrediCardNumber==true){
+                    if(creditCardTextView1.getText().length()==4){//guarda se cambia la lunghezza con un toast
+                        creditCardTextView1.setFocusable(false);
+                        creditCardTextView2.setFocusable(true);
+                    }
+                    firstTimeEnteringCrediCardNumber=false;
+                }
+
+            }
+        });
+*/
         Button buyTicketButton = (Button) findViewById(R.id.buy);
         buyTicketButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String text = creditCardTextView.getText().toString();
 
-                if(text.equals("")){
+                sBuilderCreditCard.append(creditCardTextView1.getText().toString());
+                sBuilderCreditCard.append(creditCardTextView2.getText().toString());
+                sBuilderCreditCard.append(creditCardTextView3.getText().toString());
+                sBuilderCreditCard.append(creditCardTextView4.getText().toString());
+
+                String textCreditCard = sBuilderCreditCard.toString();
+                sBuilderCreditCard.setLength(0);
+
+                if(textCreditCard.equals("")){
                     Toast.makeText(BuyTicket.this,"Insert Credit Card Number", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                if(text.matches("[0-9]+") && text.length()==16){
+                if(textCreditCard.matches("[0-9]+") && textCreditCard.length()==16){
                 }else{
                     Toast.makeText(BuyTicket.this,"Invalid Card Number", Toast.LENGTH_LONG).show();
                     return;
@@ -78,9 +124,9 @@ public class BuyTicket extends AppCompatActivity {
 
 
                 String selectedType = types.getSelectedItem().toString();
-                Products selectedProduct=null;
-                for(Products p : productMap.values()){
-                    if(selectedType.contains(p.getName()+" ") ){
+                Product selectedProduct=null;
+                for(Product p : productMap.values()){
+                    if(selectedType.contains(p.getDescription()+" ") ){
                         selectedProduct = p;
                     }
                 }
@@ -89,7 +135,8 @@ public class BuyTicket extends AppCompatActivity {
                 now.add(Calendar.MINUTE,(int)selectedProduct.getDuration());
                 String expiryDate = DateOperations.getInstance().toString(now.getTime());
 
-                String json_url = InfoHandler.BUY_TICKET_API+InfoHandler.getUsername(getApplicationContext())+"/"+creditCardTextView.getText().toString()+"/"+expiryDate+"/"+selectedProduct.getId();//+types.getSelectedItem().toString();
+                String json_url = InfoHandler.BUY_TICKET_API+InfoHandler.getUsername(getApplicationContext())+"/"+
+                        textCreditCard+"/"+selectedProduct.getType();
                 JsonObjectRequest myJsonObjectRequest = new JsonObjectRequest(Request.Method.GET, json_url
                         , null,
 
@@ -98,7 +145,7 @@ public class BuyTicket extends AppCompatActivity {
                             public void onResponse(JSONObject response) {
                                 try {
 
-                                    Toast.makeText(BuyTicket.this,response.getString("data"), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(BuyTicket.this,response.getString(JsonFields.DATA.toString()), Toast.LENGTH_LONG).show();
                                 } catch (JSONException e) {
                                     Toast.makeText(BuyTicket.this, e.getMessage(), Toast.LENGTH_LONG).show();
                                 }
@@ -135,9 +182,8 @@ public class BuyTicket extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        String types = parseTickets(response);
+                        parseTickets(response);
                         populateSpinner();
-                        Toast.makeText(BuyTicket.this, types, Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
@@ -163,31 +209,40 @@ public class BuyTicket extends AppCompatActivity {
         requestQueue.add(myJsonObjectRequest);
     }
 
-    private String parseTickets(JSONObject obj){
+    private void parseTickets(JSONObject obj){
         try {
-            JSONArray ticketArray = (JSONArray)obj.get("data");
+            JSONArray ticketArray = (JSONArray)obj.get(JsonFields.DATA.toString());
             for(int i = 0; i < ticketArray.length();i++){
                 JSONObject ticket = (JSONObject) ticketArray.get(i);
 
-                double duration = (Double)ticket.get("duration");
-                String id = (String)ticket.get("id");
-                double cost = (Double)ticket.get("cost");
-                String name = (String)ticket.get("name");
-                productMap.put(id , new SimpleTicket(name,id,cost,duration));
+                int duration = (Integer)ticket.get(TicketTypes.DURATION.toString());
+                String type = (String)ticket.get(TicketTypes.TYPE.toString());
+                double cost = (Double)ticket.get(TicketTypes.COST.toString());
+                String description = (String)ticket.get(TicketTypes.DESCRIPTION.toString());
+                switch (type.charAt(0)){
+                    case'T':
+                        productMap.put(type , new SimpleTicket(description,type,cost,duration));
+                        break;
+                    case'S':
+                        productMap.put(type , new SimpleSeason(description,type,cost/duration,duration));
+                        break;
+                    default:
+                        Toast.makeText(BuyTicket.this,"Product not found", Toast.LENGTH_LONG).show();
+                        break;
+                }
             }
-            return "ciao";
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return "ERROR PARSING";
     }
 
     public void populateSpinner () {
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_dropdown_item);
         types.setAdapter(adapter);
         List<CharSequence> list = new ArrayList<CharSequence>();
-        for (Products p : productMap.values()) {
-            list.add(p.getName() + " - " + p.getCost() + "€ - " + (int)(p.getDuration()) + " m");
+        for (Product p : productMap.values()) {
+            list.add(p.getDescription() + " - " + p.getCost() + "€ - " + (int)(p.getDuration()) + " m");
         }
         adapter.addAll(list);
         adapter.notifyDataSetChanged();

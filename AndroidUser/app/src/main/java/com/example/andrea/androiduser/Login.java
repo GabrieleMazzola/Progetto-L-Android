@@ -17,6 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.andrea.androiduser.jsonenumerations.JsonFields;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,9 +88,9 @@ public class Login extends AppCompatActivity {
                                                         @Override
                                                         public void onResponse(JSONObject response) {
                                                             try {
-                                                                Toast.makeText(Login.this,response.getString("data"), Toast.LENGTH_LONG).show();
-                                                                if(response.getString("data").equals("true")){
-                                                                    Toast.makeText(Login.this, response.getString("data"), Toast.LENGTH_LONG).show();
+                                                                Toast.makeText(Login.this,response.getString(JsonFields.DATA.toString()), Toast.LENGTH_LONG).show();
+                                                                if(response.getString(JsonFields.DATA.toString()).equals("true")){
+                                                                    Toast.makeText(Login.this, response.getString(JsonFields.DATA.toString()), Toast.LENGTH_LONG).show();
 
                                                                     InfoHandler.saveLogin(getApplicationContext(),username.getText().toString().trim(),password.getText().toString().trim());
                                                                     editText = (EditText)findViewById(R.id.username);
