@@ -58,16 +58,20 @@ public class CheckTicket extends AppCompatActivity {
                             @Override
                             public void onResponse(JSONObject response) {
                                 try {
-                                    Toast.makeText(CheckTicket.this,response.getString(JsonFields.DATA.toString()), Toast.LENGTH_LONG).show();
+                                    if(response.getBoolean(JsonFields.DATA.toString())){
+                                        Toast.makeText(CheckTicket.this, "Valid Ticket :)", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        Toast.makeText(CheckTicket.this, "Invalid Ticket :(\nIt's time to make some fines", Toast.LENGTH_LONG).show();
+                                    }
                                 } catch (JSONException e) {
-                                    Toast.makeText(CheckTicket.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(CheckTicket.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         },
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(CheckTicket.this,"Something went wrong " + error.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(CheckTicket.this,"Something went wrong :(", Toast.LENGTH_LONG).show();
                             }
                         }
                 ) {@Override

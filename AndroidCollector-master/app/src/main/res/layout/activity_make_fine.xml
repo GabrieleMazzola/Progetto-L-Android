@@ -49,6 +49,32 @@
             app:layout_constraintHorizontal_bias="0.502"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
+
+        <Button
+            android:id="@+id/SyncOfflineFines"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="89dp"
+            android:text="Sync offline fines"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/makeFine"
+            app:layout_constraintHorizontal_bias="0.28" />
+
+        <TextView
+            android:id="@+id/OfflineFineCounter"
+            android:layout_width="123dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="54dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="93dp"
+            android:textAlignment="center"
+            android:textSize="36sp"
+            app:layout_constraintLeft_toRightOf="@+id/SyncOfflineFines"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/makeFine"
+            tools:layout_editor_absoluteX="238dp" />
+
     </android.support.constraint.ConstraintLayout>
 
 </LinearLayout>

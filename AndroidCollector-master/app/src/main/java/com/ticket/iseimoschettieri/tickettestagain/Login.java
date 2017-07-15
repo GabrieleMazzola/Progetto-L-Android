@@ -67,7 +67,7 @@ public class Login extends AppCompatActivity {
                                             }
 
                                             if(username.getText().toString().equals("") || password.getText().toString().equals("")){
-                                                Toast.makeText(Login.this,"Invalid Input", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(Login.this,"Invalid Input", Toast.LENGTH_SHORT).show();
                                                 return;
                                             }
 
@@ -77,9 +77,8 @@ public class Login extends AppCompatActivity {
                                                         @Override
                                                         public void onResponse(JSONObject response) {
                                                             try {
-                                                                Toast.makeText(Login.this,response.getString(JsonFields.DATA.toString()), Toast.LENGTH_LONG).show();
+                                                                Toast.makeText(Login.this, "Have a good day at work :)", Toast.LENGTH_LONG).show();
                                                                 if(response.getString(JsonFields.DATA.toString()).equals("true")){
-                                                                    //Toast.makeText(Login.this, response.getString(JsonFields.DATA.toString()), Toast.LENGTH_LONG).show();
 
                                                                     InfoHandler.saveLogin(getApplicationContext(),username.getText().toString().trim(),password.getText().toString().trim());
                                                                     askStartingFineNumber();
@@ -92,8 +91,8 @@ public class Login extends AppCompatActivity {
                                                     new Response.ErrorListener() {
                                                         @Override
                                                         public void onErrorResponse(VolleyError error) {
-                                                            Toast.makeText(Login.this,"Something went wrong " + error.getMessage(), Toast.LENGTH_LONG).show();
-                                                            username.setText(error.getMessage());
+                                                            Toast.makeText(Login.this,"Something went wrong :(" , Toast.LENGTH_SHORT).show();
+
                                                         }
                                                     }
                                             ) {@Override
@@ -117,8 +116,6 @@ public class Login extends AppCompatActivity {
 
     private void askStartingFineNumber() {
 
-        Toast.makeText(Login.this,  InfoHandler.ASK_STARTING_NUMBER + InfoHandler.getUsername(getApplicationContext()), Toast.LENGTH_LONG).show();
-
         JsonObjectRequest myJsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                 InfoHandler.ASK_STARTING_NUMBER + InfoHandler.getUsername(getApplicationContext())
                 , null,
@@ -132,7 +129,6 @@ public class Login extends AppCompatActivity {
                             editText.setText("");
                             editText = (EditText)findViewById(R.id.password);
                             editText.setText("");
-                            Toast.makeText(Login.this, InfoHandler.getStartingNumber(getApplicationContext()).toString(), Toast.LENGTH_LONG).show();
 
                             startActivity(toCollectorHub);
                         } catch (JSONException e) {
@@ -144,7 +140,7 @@ public class Login extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Login.this, "Fallita richiesta starting number " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(Login.this, "Failed starting number request :(",  Toast.LENGTH_LONG).show();
                     }
                 }
         ) {
