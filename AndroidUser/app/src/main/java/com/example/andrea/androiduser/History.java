@@ -73,7 +73,6 @@ public class History extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.i("REDS","parseTicketTypes");
                         parseTicketTypes(response);
                         createHistoryVolley();
                     }
@@ -81,7 +80,7 @@ public class History extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(History.this, "Something went wrong " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(History.this, "Something went wrong :(", Toast.LENGTH_SHORT).show();
                     }
                 }
         ) {
@@ -113,7 +112,6 @@ public class History extends AppCompatActivity {
                 String type = (String)ticket.get(TicketTypes.TYPE.toString());
                 double cost = (Double)ticket.get(TicketTypes.COST.toString());
                 String description = (String)ticket.get(TicketTypes.DESCRIPTION.toString());
-                Log.i("REDS","parseTicketTypes ITERATION");
                 switch (type.charAt(0)){
                     case'T':
                         products.put(type , new SimpleTicket(description,type,cost,duration));
@@ -122,11 +120,9 @@ public class History extends AppCompatActivity {
                         products.put(type , new SimpleSeason(description,type,cost,duration));
                         break;
                     default:
-                        Toast.makeText(History.this,"Product not found", Toast.LENGTH_LONG).show();
                         break;
                 }
             }
-            Log.i("REDS","parseTicketTypes FINE");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -149,7 +145,7 @@ public class History extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(History.this,"Something went wrong " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(History.this,"Something went wrong :(", Toast.LENGTH_SHORT).show();
                     }
                 }
         ) {@Override
@@ -169,14 +165,12 @@ public class History extends AppCompatActivity {
     }
 
     private String printTickets() {
-        Log.i("REDS","printTickets");
         StringBuilder sb = new StringBuilder("TICKETS\n\n");
         for(Sale sale : salesList){
             sb.append("\n------------------------------");
             sb.append(sale.toString());
             sb.append("\n\n");
         }
-        Log.i("REDS","printTickets FINE");
         return sb.toString();
     }
 
@@ -189,38 +183,24 @@ public class History extends AppCompatActivity {
         try {
             JSONArray ticketArray = (JSONArray)obj.get(JsonFields.DATA.toString());
             salesList = new ArrayList<>();
-            Log.i("REDS","parseTickets");
 
             for(int i = 0; i < ticketArray.length();i++){
 
                 JSONObject ticket = (JSONObject) ticketArray.get(i);
 
                 String sellDate = (String) ticket.get(MyTickets.SALEDATE.toString());
-                Log.i("REDS","parseTickets SALE");
                 String type =(String) ticket.get(MyTickets.TYPE.toString());
-                Log.i("REDS","parseTickets TYPE");
                 String sellerMachineIp = (String) ticket.get(MyTickets.SELLERMACHINEIP.toString());
-                Log.i("REDS","parseTickets IP");
                 String username = (String) ticket.get(MyTickets.USERNAME.toString());
-                Log.i("REDS","parseTickets USERNAME");
                 Integer serialCode = (Integer) ticket.get(MyTickets.SERIALCODE.toString());
-                Log.i("REDS","parseTickets SERIAL");
-
 
                 Date saleDate = DateOperations.getInstance().parse(sellDate);
 
-                Log.i("REDS","parseTickets PARSING");
-
-
                 Sale sale = new Sale(saleDate, Long.valueOf(serialCode.toString()), username, products.get(type), sellerMachineIp );
-                Log.i("REDS","parseTickets CREAZIONE SALE");
 
                 salesList.add(sale);
-                Log.i("REDS","parseTickets AGGIUNTA SALE");
-
             }
 
-            Log.i("REDS","parseTickets FINE");
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (ParseException e) {

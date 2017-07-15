@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class InfoHandler {
 
-    public static String HOST = "10.87.251.254:7070";
+    public static String HOST = "192.168.1.4:8080";
 
     public static String USERLOGIN_API = "http://"+HOST+"/ticket/webapi/secured/user/login/";
 

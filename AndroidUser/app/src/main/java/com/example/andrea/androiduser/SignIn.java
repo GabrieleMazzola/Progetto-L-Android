@@ -41,7 +41,7 @@ public class SignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        final Intent toUserHub = new Intent(this,UserHub.class);
+        final Intent toLogin = new Intent(this,Login.class);
 
         final StringBuilder stringBuilder = new StringBuilder();
 
@@ -57,57 +57,50 @@ public class SignIn extends AppCompatActivity {
 
         Button signInButton = (Button) findViewById(R.id.signInButton);
         signInButton.setOnClickListener(new Button.OnClickListener() {
-                                        public void onClick(View v) {
+                                            public void onClick(View v) {
 
-                                            if(     name.getText().toString().equals("") ||
-                                                    surname.getText().toString().equals("") ||
-                                                    username.getText().toString().equals("") ||
-                                                    cf.getText().toString().equals("") ||
-                                                    psw1.getText().toString().equals("") ||
-                                                    psw2.getText().toString().equals("") ||
-                                                    email.getText().toString().equals(""))
-                                            {
-                                                Toast.makeText(SignIn.this,"Invalid Input", Toast.LENGTH_LONG).show();
-                                                return;
-                                            }
+                                                if(     name.getText().toString().equals("") ||
+                                                        surname.getText().toString().equals("") ||
+                                                        username.getText().toString().equals("") ||
+                                                        cf.getText().toString().equals("") ||
+                                                        psw1.getText().toString().equals("") ||
+                                                        psw2.getText().toString().equals("") ||
+                                                        email.getText().toString().equals(""))
+                                                {
+                                                    Toast.makeText(SignIn.this,"Invalid Input", Toast.LENGTH_LONG).show();
+                                                    return;
+                                                }
 
-                                            if(psw1.getText().toString().equals(psw2.getText().toString())) {
-                                            }else{
-                                                Toast.makeText(SignIn.this,"Password Mismatch", Toast.LENGTH_LONG).show();
-                                                return;
-                                            }
+                                                if(psw1.getText().toString().equals(psw2.getText().toString())) {
+                                                }else{
+                                                    Toast.makeText(SignIn.this,"Password Mismatch", Toast.LENGTH_LONG).show();
+                                                    return;
+                                                }
 
-                                            String json_url = InfoHandler.REGISTRATION_API + name.getText().toString() + "/" + surname.getText().toString()+
-                                                                "/" + cf.getText().toString() + "/" + username.getText().toString() + "/" + psw1.getText().toString()
-                                                                + "/" + email.getText().toString();
-                                            Log.i("CREATEUSER",json_url);
-                                            JsonObjectRequest myJsonObjectRequest = new JsonObjectRequest(Request.Method.GET, json_url, null,
+                                                String json_url = InfoHandler.REGISTRATION_API + name.getText().toString() + "/" + surname.getText().toString()+
+                                                        "/" + cf.getText().toString() + "/" + username.getText().toString() + "/" + psw1.getText().toString()
+                                                        + "/" + email.getText().toString();
+                                                Log.i("CREATEUSER",json_url);
+                                                JsonObjectRequest myJsonObjectRequest = new JsonObjectRequest(Request.Method.GET, json_url, null,
 
-                                                    new Response.Listener<JSONObject>() {
-                                                        @Override
-                                                        public void onResponse(JSONObject response) {
-                                                            try {
-                                                                Toast.makeText(SignIn.this, response.getString(JsonFields.DATA.toString()), Toast.LENGTH_LONG).show();
-                                                                if (response.getString(JsonFields.DATA.toString()).equals("true")) {
-                                                                    Toast.makeText(SignIn.this, response.getString(JsonFields.DATA.toString()), Toast.LENGTH_LONG).show();
-                                                                    InfoHandler.saveLogin(getApplicationContext(), username.getText().toString(), psw1.getText().toString());
-                                                                    startActivity(toUserHub);
-                                                                }
-                                                            } catch (JSONException e) {
-                                                                Toast.makeText(SignIn.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                                        new Response.Listener<JSONObject>() {
+                                                            @Override
+                                                            public void onResponse(JSONObject response) {
+
+                                                                    Toast.makeText(SignIn.this, "Check your e-mail", Toast.LENGTH_LONG).show();
+                                                                     startActivity(toLogin);
+                                                            }
+                                                        },
+                                                        new Response.ErrorListener() {
+                                                            @Override
+                                                            public void onErrorResponse(VolleyError error) {
+                                                                Toast.makeText(SignIn.this, "Something went wrong " + error.getMessage(), Toast.LENGTH_LONG).show();
                                                             }
                                                         }
-                                                    },
-                                                    new Response.ErrorListener() {
-                                                        @Override
-                                                        public void onErrorResponse(VolleyError error) {
-                                                            Toast.makeText(SignIn.this, "Something went wrong " + error.getMessage(), Toast.LENGTH_LONG).show();
-                                                        }
-                                                    }
-                                            );
-                                            requestQueue.add(myJsonObjectRequest);
+                                                );
+                                                requestQueue.add(myJsonObjectRequest);
+                                            }
                                         }
-                                    }
         );
     }
 

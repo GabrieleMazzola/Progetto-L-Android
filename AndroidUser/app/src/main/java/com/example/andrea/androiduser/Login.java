@@ -88,9 +88,8 @@ public class Login extends AppCompatActivity {
                                                         @Override
                                                         public void onResponse(JSONObject response) {
                                                             try {
-                                                                Toast.makeText(Login.this,response.getString(JsonFields.DATA.toString()), Toast.LENGTH_LONG).show();
                                                                 if(response.getString(JsonFields.DATA.toString()).equals("true")){
-                                                                    Toast.makeText(Login.this, response.getString(JsonFields.DATA.toString()), Toast.LENGTH_LONG).show();
+                                                                    Toast.makeText(Login.this, "Welcome to MonopattinoAirway", Toast.LENGTH_SHORT).show();
 
                                                                     InfoHandler.saveLogin(getApplicationContext(),username.getText().toString().trim(),password.getText().toString().trim());
                                                                     editText = (EditText)findViewById(R.id.username);
@@ -99,17 +98,18 @@ public class Login extends AppCompatActivity {
                                                                     editText.setText("");
 
                                                                     startActivity(toUserHub);
+                                                                }else{
+                                                                    Toast.makeText(Login.this, "Incorrect fields", Toast.LENGTH_SHORT).show();
                                                                 }
                                                             } catch (JSONException e) {
-                                                                Toast.makeText(Login.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                                                Toast.makeText(Login.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                                             }
                                                         }
                                                     },
                                                     new Response.ErrorListener() {
                                                         @Override
                                                         public void onErrorResponse(VolleyError error) {
-                                                            Toast.makeText(Login.this,"Something went wrong " + error.getMessage(), Toast.LENGTH_LONG).show();
-                                                            username.setText(error.getMessage());
+                                                            Toast.makeText(Login.this,"Something went wrong :(", Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                             ) {@Override
