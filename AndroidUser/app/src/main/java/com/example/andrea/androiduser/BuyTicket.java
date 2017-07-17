@@ -245,7 +245,7 @@ public class BuyTicket extends AppCompatActivity {
         types.setAdapter(adapter);
         List<CharSequence> list = new ArrayList<CharSequence>();
         for (Product p : productMap.values()) {
-            list.add(p.getDescription() + " - " + p.getCost() + "€ - " + (int)(p.getDuration()) + " m");
+            list.add(p.getDescription() + " - " + p.getCost() + "€ - " + (int)(p.getDuration()) + p.getUnitMeasure() );
         }
         adapter.addAll(list);
         adapter.notifyDataSetChanged();

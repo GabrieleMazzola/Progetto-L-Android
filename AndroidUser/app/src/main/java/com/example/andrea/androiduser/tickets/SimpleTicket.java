@@ -8,6 +8,7 @@ public class SimpleTicket implements Product{
 
     private final String description;
     private final String type;
+    private final String UnitMeasure=" minute/s";
     private double cost;
     private int duration;
 
@@ -38,6 +39,8 @@ public class SimpleTicket implements Product{
         return duration;
     }
 
+    @Override
+    public String getUnitMeasure() { return UnitMeasure; }
 
     public String toString(){
 

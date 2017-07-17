@@ -51,6 +51,8 @@ public class MakeFine extends AppCompatActivity {
 
         offlineFineCounterTextView = (TextView) findViewById(R.id.OfflineFineCounter);
 
+        refreshOfflineCounter();
+
         Button makeFineButton = (Button) findViewById(R.id.makeFine);
         makeFineButton.setOnClickListener(new Button.OnClickListener() {
             @Override

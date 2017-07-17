@@ -7,6 +7,7 @@ package com.example.andrea.androiduser.tickets;
 public class SimpleSeason implements Product{
 
     private String description;
+    private final String UnitMeasure=" month/s";
     private String type;
     private double monthlyCost;
     private int duration;
@@ -38,6 +39,11 @@ public class SimpleSeason implements Product{
     @Override
     public int getDuration() {
         return duration;
+    }
+
+    @Override
+    public String getUnitMeasure() {
+        return UnitMeasure;
     }
 
     public String toString(){

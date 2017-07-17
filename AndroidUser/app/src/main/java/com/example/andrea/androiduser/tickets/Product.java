@@ -8,6 +8,8 @@ public interface Product {
 
     public String getDescription();
     public String getType();
+    public String getUnitMeasure();
     public double getCost();
     public int getDuration();
+
 }
